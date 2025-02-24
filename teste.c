@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define MAX_PRODUTOS 100 // Limite máximo de produtos
-
+]]
 typedef struct {
     int id;
     char nome[50];
