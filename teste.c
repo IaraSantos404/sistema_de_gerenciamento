@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_PRODUTOS 100 // Limite máximo de produtos
+#define MAX_PRODUTOS 100 // Limite maximo de produtos
 
 typedef struct {
     int id;
