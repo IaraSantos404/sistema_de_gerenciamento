@@ -12,8 +12,6 @@ void add(){
   
 }
 
-void remover(){
-  
-}
+
 
 
