@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_PRODUTOS 100 // Limite máximo de produtos
-]]
+#define MAX_PRODUTOS 100 // Limite maximo de produtos
+
 typedef struct {
     int id;
     char nome[50];
@@ -11,10 +11,12 @@ typedef struct {
     int quantidade;
 } Produto;
 
+
 Produto produtos[MAX_PRODUTOS]; // Lista de produtos
 int totalProdutos = 0; // Contador de produtos cadastrados
 
 // Função para salvar produtos no arquivo
+//talvez seja uma boa fazer essa funções aq, vai dar menos trabalho nas funções de add e remover
 void salvarEmArquivo() {
     FILE *arquivo = fopen("produtos.txt", "w"); // Abrir em modo de escrita
     if (arquivo == NULL) {
@@ -59,7 +61,7 @@ void adicionarProduto() {
     printf("ID do produto: ");
     scanf("%d", &novo.id);
     printf("Nome do produto: ");
-    scanf("%s", novo.nome);
+    scanf("%s", &novo.nome);
     printf("Preço: ");
     scanf("%f", &novo.preco);
     printf("Quantidade em estoque: ");
@@ -114,7 +116,7 @@ void menu() {
 
 // Função principal
 int main() {
-    carregarDeArquivo(); // Carregar dados salvos
+    carregarDeArquivo(); // Carregar dados salvos(obs: essa função vai ser feita?)
     menu(); // Iniciar menu
     return 0;
 }
