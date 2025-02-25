@@ -87,6 +87,52 @@ void listarProdutos() {
     }
 }
 
+// void removeProduct() {
+//     int id;
+//     char buffer[50];
+//     printf("Digite o ID do produto a ser removido: ");
+//     if (fgets(buffer, sizeof(buffer), stdin) == NULL) return;
+//     sscanf(buffer, "%d", &id);
+
+//     FILE *arquivo = fopen("produto.txt", "r");
+//     if (arquivo == NULL) {
+//         printf("Erro ao abrir o arquivo.\n");
+//         return;
+//     }
+//     FILE *tempFile = fopen("temp.txt", "w");
+//     if (tempFile == NULL) {
+//         printf("Erro ao criar arquivo temporario.\n");
+//         fclose(arquivo);
+//         return;
+//     }
+
+//     Produto prod;
+//     int encontrado = 0;
+//     // ler todas as linhas do arquivo produto.txt
+//     while (fscanf(arquivo, "%d\t%50[^\t]\t%f\t%d\n", &prod.id, prod.nome, &prod.preco, &prod.quant_estoque) != EOF) {
+//         //caso ache o id pesquisado não reescreve e coloca como removido
+//         if (prod.id == id) {
+//             encontrado = 1;
+//             printf("Produto com ID %d removido.\n", id);
+//             continue; // Não escreve este produto no arquivo temporário
+//         }
+//         //se não for o produto com o id pesquisado reescreve todos normalmente
+//         fprintf(tempFile, "%d\t%s\t%.2f\t%d\n", prod.id, prod.nome, prod.preco, prod.quant_estoque);
+//     }
+
+//     fclose(arquivo);
+//     fclose(tempFile);
+
+//     if (!encontrado) {
+//         printf("Produto com ID %d nao encontrado.\n", id);
+//         remove("temp.txt");
+//     } else {
+//         remove("produto.txt");
+//         rename("temp.txt", "produto.txt");
+//     }
+// }
+
+
 // Menu principal
 void menu() {
     int opcao;
