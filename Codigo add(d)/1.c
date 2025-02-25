@@ -11,25 +11,28 @@ typedef struct Produto {
 
 void add(void) {
     Produto novo;
-    FILE *arquivo = fopen("teste.c", "rb+");
+    FILE *arquivo = fopen("teste.txt", "a");
 
     if (arquivo == NULL) {
-        // Se o arquivo não existir, cria-o
-        arquivo = fopen("teste.c", "wb+");
-        if (arquivo == NULL) {
-            printf("Erro ao criar o arquivo.\n");
-            return;
-        }
+        printf("Erro ao abrir o arquivo.\n");
+        return;
     }
 
     Produto temp;
     int ultimo_id = 0;
-    while (fread(&temp, sizeof(Produto), 1, arquivo) == 1) {
-        ultimo_id = temp.id;
+
+    // Procurando o último ID já cadastrado
+    FILE *arquivo_leitura = fopen("teste.txt", "r");
+    if (arquivo_leitura != NULL) {
+        while (fscanf(arquivo_leitura, "%d\t%50[^\t]\t%f\t%d\n", &temp.id, temp.nome, &temp.preco, &temp.quant_estoque) != EOF) {
+            ultimo_id = temp.id;
+        }
+        fclose(arquivo_leitura);
     }
+
     novo.id = ultimo_id + 1;
 
-    printf("Digite o nome do produto (Ate 50 caracteres): ");
+    printf("Digite o nome do produto (Até 50 caracteres): ");
     scanf(" %50[^\n]", novo.nome);
 
     printf("Digite o preco do produto: ");
@@ -38,15 +41,15 @@ void add(void) {
     printf("Digite a quantidade de produtos que vao entrar no estoque: ");
     scanf("%d", &novo.quant_estoque);
 
-    fseek(arquivo, 0, SEEK_END);
-    fwrite(&novo, sizeof(Produto), 1, arquivo);
+    // Salvando os dados no arquivo no formato de banco de dados
+    fprintf(arquivo, "%d\t%s\t%.2f\t%d\n", novo.id, novo.nome, novo.preco, novo.quant_estoque);
 
     fclose(arquivo);
     printf("Produto cadastrado com ID %d.\n", novo.id);
 }
 
 void imprimir(void) {
-    FILE *arquivo = fopen("teste.c", "rb");
+    FILE *arquivo = fopen("teste.txt", "r");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo de produtos.\n");
         return;
@@ -56,7 +59,7 @@ void imprimir(void) {
     int encontrou = 0;
 
     printf("\n=== Lista de Produtos ===\n");
-    while (fread(&produto, sizeof(Produto), 1, arquivo) == 1) {
+    while (fscanf(arquivo, "%d\t%50[^\t]\t%f\t%d\n", &produto.id, produto.nome, &produto.preco, &produto.quant_estoque) != EOF) {
         encontrou = 1;
         printf("ID: %d\n", produto.id);
         printf("Nome: %s\n", produto.nome);
