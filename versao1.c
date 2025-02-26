@@ -30,6 +30,7 @@ void addProduct() {
 
     // Leitura e validação do nome (somente letras e espaços)
     while (1) {
+        printf("Se for escrever numero, escreva por extenso\n");
         printf("Digite o nome do produto (ate 50 caracteres, apenas letras e espacos): ");
         if (fgets(novo.nome, sizeof(novo.nome), stdin) == NULL) continue;
         size_t len = strlen(novo.nome);
@@ -37,14 +38,16 @@ void addProduct() {
             novo.nome[len - 1] = '\0';
         }
         if (strlen(novo.nome) == 0) {
-            printf("Nome nao pode ser vazio.\n");
+            printf("\nNome nao pode ser vazio.\n\n");
             continue;
         }
         int valido = 1;
         for (size_t i = 0; i < strlen(novo.nome); i++) {
-            if (!isalpha(novo.nome[i]) && novo.nome[i] != ' ') {
+            if (!isalpha(novo.nome[i]) && novo.nome[i] != ' ') { /* ERRRRRRRRRRO AQ Se colocar só espaço vazio como nome ele aceita, e todo resto vai errado, 
+                nome vai ser o preço, preço vai ser quantidade e quant eu n sei da onde ele tira OBS: ELE MATA O CODIGO, N SEI COMO, acho q é quando faz mais de um errado
+                ou tenta atualizar o errado, resumindo, conserta isso aq*/
                 valido = 0;
-                printf("Nome invalido. Use apenas letras e espacos.\n");
+                printf("\nNome invalido. Use apenas letras e espacos.\n\n");
                 break;
             }
         }
@@ -52,14 +55,14 @@ void addProduct() {
     }
 
     // Leitura e validação do preco, vai cair em loop ate o usuario digitar um numero válido
-    // while(1) = while TRUE esse sscanf tebta pegar um float do buffer e armazena no novo.preco
+    // while(1) = while TRUE esse sscanf tenta pegar um float do buffer e armazena no novo.preco
     while (1) {
         printf("Digite o preco do produto: ");
         if (fgets(buffer, sizeof(buffer), stdin) == NULL) continue;
         if (sscanf(buffer, "%f", &novo.preco) == 1)
             break;
         else
-            printf("Entrada invalida. Digite um numero.\n");
+            printf("\nEntrada invalida. Digite um numero.\n\n");
     }
 
     // Leitura e validação da quantidade 
@@ -69,7 +72,7 @@ void addProduct() {
         if (sscanf(buffer, "%d", &novo.quant_estoque) == 1)
             break;
         else
-            printf("Entrada invalida. Digite um numero inteiro.\n");
+            printf("\nEntrada invalida. Digite um numero inteiro.\n\n");
     }
 
     // Salva os dados no arquivo produto.txt
@@ -91,7 +94,7 @@ void listarProdutos() {
     }
     Produto produto;
     int encontrou = 0;
-    printf("\n=== Lista de produtoutos ===\n");
+    printf("\n=== Lista de produtos ===\n");
     while (fscanf(arquivo, "%d\t%50[^\t]\t%f\t%d\n", &produto.id, produto.nome, &produto.preco, &produto.quant_estoque) != EOF) {
         encontrou = 1;
         printf("ID: %d\n", produto.id);
@@ -147,14 +150,14 @@ void updateProduct() {
                     prod.nome[len - 1] = '\0';
                 }
                 if (strlen(prod.nome) == 0) {
-                    printf("Nome nao pode ser vazio.\n");
+                    printf("\nNome nao pode ser vazio.\n\n");
                     continue;
                 }
                 int valido = 1;
                 for (size_t i = 0; i < strlen(prod.nome); i++) {
                     if (!isalpha(prod.nome[i]) && prod.nome[i] != ' ') {
                         valido = 0;
-                        printf("Nome invalido. Use apenas letras e espacos.\n");
+                        printf("\nNome invalido. Use apenas letras e espacos.\n\n");
                         break;
                     }
                 }
@@ -168,7 +171,7 @@ void updateProduct() {
                 if (sscanf(buffer, "%f", &prod.preco) == 1)
                     break;
                 else
-                    printf("Entrada invalida. Digite um numero.\n");
+                    printf("\nEntrada invalida. Digite um numero.\n\n");
             }
 
             // Quantidade
@@ -178,7 +181,7 @@ void updateProduct() {
                 if (sscanf(buffer, "%d", &prod.quant_estoque) == 1)
                     break;
                 else
-                    printf("Entrada invalida. Digite um numero inteiro.\n");
+                    printf("\nEntrada invalida. Digite um numero inteiro.\n\n");
             }
         }
         fprintf(tempFile, "%d\t%s\t%.2f\t%d\n", prod.id, prod.nome, prod.preco, prod.quant_estoque);
@@ -213,7 +216,7 @@ void removeProduct() {
         printf("Erro ao abrir o arquivo.\n");
         return;
     }
-    
+    // Cria um arquivo temporário para escrever como vai ficar o produto dps da remoção
     FILE *tempFile = fopen("temp.txt", "w");
     if (tempFile == NULL) {
         printf("Erro ao criar arquivo temporario.\n");
@@ -292,26 +295,30 @@ int main() {
     do {
         menu();
         if (fgets(buffer, sizeof(buffer), stdin) == NULL) continue;
-        sscanf(buffer, "%d", &opcao);
+        if (sscanf(buffer, "%d", &opcao) != 1){
+            printf("Opcao invalida.\n");
+            continue;
+        }else{
 
-        switch (opcao) {
-            case 1:
-                addProduct();
-                break;
-            case 2:
-                updateProduct();
-                break;
-            case 3:
-                removeProduct();
-                break;
-            case 4:
-                listarProdutos();
-                break;
-            case 5:
-                printf("Saindo...\n");
-                break;
-            default:
-                printf("Opcao invalida.\n");
+            switch (opcao) {
+                case 1:
+                    addProduct();
+                    break;
+                case 2:
+                    updateProduct();
+                    break;
+                case 3:
+                    removeProduct();
+                    break;
+                case 4:
+                    listarProdutos();
+                    break;
+                case 5:
+                    printf("Saindo...\n");
+                    break;
+                default:
+                    printf("Opcao invalida.\n");
+            }
         }
     } while (opcao != 5);
 
