@@ -10,7 +10,7 @@ typedef struct {
     int quant_estoque;
 } Produto;
 
-void addProduct() {
+void addProduto() {
     Produto novo;
     FILE *arquivo;
     int last_id = 0;
@@ -42,16 +42,24 @@ void addProduct() {
             continue;
         }
         int valido = 1;
+        int contemLetra = 0;
         for (size_t i = 0; i < strlen(novo.nome); i++) {
-            if (!isalpha(novo.nome[i]) && novo.nome[i] != ' ') { /* ERRRRRRRRRRO AQ Se colocar só espaço vazio como nome ele aceita, e todo resto vai errado, 
-                nome vai ser o preço, preço vai ser quantidade e quant eu n sei da onde ele tira OBS: ELE MATA O CODIGO, N SEI COMO, acho q é quando faz mais de um errado
-                ou tenta atualizar o errado, resumindo, conserta isso aq*/
+            if (!isalpha(novo.nome[i]) && novo.nome[i] != ' ') {
                 valido = 0;
                 printf("\nNome invalido. Use apenas letras e espacos.\n\n");
                 break;
             }
+            if (isalpha(novo.nome[i])) {
+                contemLetra = 1;
+            }
         }
-        if (valido) break;
+        if (!contemLetra) {
+            valido = 0;
+            printf("\nNome invalido. O nome deve conter ao menos uma letra.\n\n");
+        }
+        if (valido)
+            break;
+
     }
 
     // Leitura e validação do preco, vai cair em loop ate o usuario digitar um numero válido
@@ -99,7 +107,7 @@ void listarProdutos() {
         encontrou = 1;
         printf("ID: %d\n", produto.id);
         printf("Nome: %s\n", produto.nome);
-        printf("Preco: %.2f\n", produto.preco);
+        printf("Preco: R$%.2f\n", produto.preco);
         printf("Quantidade no Estoque: %d\n", produto.quant_estoque);
         printf("--------------------------\n");
     }
@@ -109,12 +117,22 @@ void listarProdutos() {
     fclose(arquivo);
 }
 
-void updateProduct() {
+void updateProduto() {
     int id;
     char buffer[50];
-    printf("Digite o ID do produto a ser atualizado: ");
-    if (fgets(buffer, sizeof(buffer), stdin) == NULL) return;
-    sscanf(buffer, "%d", &id);
+    while(1){
+        printf("Digite o ID do produto a ser atualizado: ");
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) return;
+        if (sscanf(buffer, "%d", &id) == 1)
+            break;
+        else
+            printf("\nEntrada invalida. Digite um numero inteiro.\n\n");
+        }
+    
+    // if (fgets(buffer, sizeof(buffer), stdin) == NULL) return;
+    // sscanf(buffer, "%d", &id);
+
+    
 
     FILE *arquivo = fopen("produto.txt", "r");
     if (arquivo == NULL) {
@@ -154,13 +172,22 @@ void updateProduct() {
                     continue;
                 }
                 int valido = 1;
+                int contemLetra = 0;
                 for (size_t i = 0; i < strlen(prod.nome); i++) {
                     if (!isalpha(prod.nome[i]) && prod.nome[i] != ' ') {
                         valido = 0;
                         printf("\nNome invalido. Use apenas letras e espacos.\n\n");
                         break;
                     }
+                    if (isalpha(prod.nome[i])) {
+                        contemLetra = 1;
+                    }
                 }
+                if (!contemLetra) {
+                    valido = 0;
+                    printf("\nNome invalido. O nome deve conter ao menos uma letra.\n\n");
+                }
+
                 if (valido) break;
             }
 
@@ -201,15 +228,22 @@ void updateProduct() {
 }
 
 
-void removeProduct() {
+void removeProduto() {
     int id;
     char buffer[50];
     
     // Solicita o ID do produto
-    printf("Digite o ID do produto a ser removido: ");
-    if (fgets(buffer, sizeof(buffer), stdin) == NULL) 
-        return;
-    sscanf(buffer, "%d", &id);
+    while(1){
+        printf("Digite o ID do produto a ser removido: ");
+        if(fgets(buffer, sizeof(buffer), stdin) == NULL)
+            return;
+        if(sscanf(buffer, "%d", &id) == 1)
+            break;
+        else
+            printf("\nEntrada invalida. Digite um numero.\n");
+        
+    }
+    
 
     FILE *arquivo = fopen("produto.txt", "r");
     if (arquivo == NULL) {
@@ -302,13 +336,13 @@ int main() {
 
             switch (opcao) {
                 case 1:
-                    addProduct();
+                    addProduto();
                     break;
                 case 2:
-                    updateProduct();
+                    updateProduto();
                     break;
                 case 3:
-                    removeProduct();
+                    removeProduto();
                     break;
                 case 4:
                     listarProdutos();
