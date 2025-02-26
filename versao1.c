@@ -112,7 +112,7 @@ void listarProdutos() {
         printf("--------------------------\n");
     }
     if (!encontrou) {
-        printf("Nenhum produto encontrado.\n");
+        printf("Nenhum produto cadastrado.\n");
     }
     fclose(arquivo);
 }
@@ -283,22 +283,46 @@ void removeProduto() {
                     printf("Quantidade invalida para remocao.\n");
                 }
             }
-            
-            prod.quant_estoque -= quantre;
-            // Se o estoque for zerado, não escreve o produto no arquivo temporário
-            if (prod.quant_estoque == 0) {
-                printf("Produto removido da lista, pelo estoque ter sido zerado.\n");
+            char confirm;
+            //Loop para confirmar se realmente quer remover os produtos ou não
+            while (1) {
+                printf("Deseja confirmar a remocao? (s/n): ");
+                if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+                    return;
+                if (sscanf(buffer, " %c", &confirm) != 1) {
+                    printf("\nEntrada invalida. Tente novamente.\n");
+                    continue;
+                }
+                if (confirm == 's' || confirm == 'n') {
+                    break;
+                } else {
+                    printf("\nEntrada invalida. Tente novamente.\n");
+                }
+            }
+            if(confirm == 's'){
+                prod.quant_estoque -= quantre;
+                // Se o estoque for zerado, não escreve o produto no arquivo temporário
+                if (prod.quant_estoque == 0) {
+                    printf("Produto removido da lista, pelo estoque ter sido zerado.\n");
+                } else {
+                    printf("Quantidade removida com sucesso.\n");
+                    fprintf(tempFile, "%d\t%s\t%.2f\t%d\n", 
+                            prod.id, prod.nome, prod.preco, prod.quant_estoque);
+                }
+                removalDone = 1;
+            }else{
+                printf("\nRemocao cancelada.\n");
+                fclose(arquivo);
+                fclose(tempFile);
+                remove("temp.txt");
+                return;
+                return;
+            }
             } else {
-                printf("Quantidade removida com sucesso.\n");
+                // Para os demais produtos, apenas regrava os dados no arquivo temporário
                 fprintf(tempFile, "%d\t%s\t%.2f\t%d\n", 
                         prod.id, prod.nome, prod.preco, prod.quant_estoque);
             }
-            removalDone = 1;
-        } else {
-            // Para os demais produtos, apenas regrava os dados no arquivo temporário
-            fprintf(tempFile, "%d\t%s\t%.2f\t%d\n", 
-                    prod.id, prod.nome, prod.preco, prod.quant_estoque);
-        }
     }
 
     fclose(arquivo);
